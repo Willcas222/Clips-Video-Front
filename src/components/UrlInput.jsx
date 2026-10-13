@@ -2,16 +2,18 @@ import { useState } from 'react'
 
 // Cualquier enlace http(s): el backend (yt-dlp) decide si el sitio es compatible
 const URL_RE = /^https?:\/\/[^\s/]+\.[^\s/]+/i
+const CLIP_OPTIONS = Array.from({ length: 10 }, (_, i) => i + 1)
 
 export default function UrlInput({ onSubmit, disabled }) {
   const [url, setUrl] = useState('')
   // Desmarcado por defecto: se asume riesgo de copyright y se aplica el procesado completo
   const [isStreamerFriendly, setIsStreamerFriendly] = useState(false)
+  const [numClips, setNumClips] = useState(3)
   const valid = URL_RE.test(url.trim())
 
   const submit = (e) => {
     e.preventDefault()
-    if (valid && !disabled) onSubmit(url.trim(), isStreamerFriendly)
+    if (valid && !disabled) onSubmit(url.trim(), isStreamerFriendly, numClips)
   }
 
   return (
@@ -33,6 +35,30 @@ export default function UrlInput({ onSubmit, disabled }) {
         >
           Generar Shorts
         </button>
+      </div>
+
+      <div className="flex flex-col gap-2 rounded-2xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 has-[:disabled]:opacity-50">
+        <span className="text-sm font-semibold">Clips a generar</span>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Clips a generar">
+          {CLIP_OPTIONS.map((n) => (
+            <button
+              key={n}
+              type="button"
+              role="radio"
+              aria-checked={numClips === n}
+              onClick={() => setNumClips(n)}
+              disabled={disabled}
+              className={`size-10 rounded-xl font-display font-black transition disabled:cursor-not-allowed ${
+                numClips === n ? 'bg-yellow-400 text-zinc-950' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+              }`}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+        <span className="text-xs text-zinc-400">
+          Más clips no alargan mucho el análisis; cada clip extra añade ~1 min de render.
+        </span>
       </div>
 
       <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">

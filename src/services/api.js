@@ -15,9 +15,12 @@ async function request(path, options) {
 const postJson = (path, body) =>
   request(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
 
-/** isStreamerFriendly: el streamer permite clips → edición ligera sin procesado anti-copyright. */
-export const startProcessing = (url, isStreamerFriendly = false) =>
-  postJson('/api/process', { url, is_streamer_friendly: isStreamerFriendly })
+/**
+ * isStreamerFriendly: el streamer permite clips → edición ligera sin procesado anti-copyright.
+ * numClips: cuántos clips generar (1-10).
+ */
+export const startProcessing = (url, isStreamerFriendly = false, numClips = 3) =>
+  postJson('/api/process', { url, is_streamer_friendly: isStreamerFriendly, num_clips: numClips })
 
 export const getStatus = (taskId) => request(`/api/status/${taskId}`)
 export const getClips = (taskId) => request(`/api/clips/${taskId}`)

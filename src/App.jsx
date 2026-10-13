@@ -56,13 +56,13 @@ export default function App() {
   const running = task && task.status !== 'completed' && task.status !== 'error'
 
   // El backend procesa el video completo (también streams de horas): solo hace falta la URL
-  const handleSubmit = async (url, isStreamerFriendly) => {
+  const handleSubmit = async (url, isStreamerFriendly, numClips) => {
     stopWatch.current?.()
     setError(null)
     setClips([])
     setTask(null)
     try {
-      const { task_id } = await startProcessing(url, isStreamerFriendly)
+      const { task_id } = await startProcessing(url, isStreamerFriendly, numClips)
       setTask({ id: task_id, status: 'queued', stage: 'queued', message: 'En cola…', progress: 0 })
       setTaskInUrl(task_id)
       follow(task_id)
